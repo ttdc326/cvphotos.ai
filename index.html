@@ -30,14 +30,16 @@
         <div class="space-y-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span> Tải khuôn mặt của bạn</h2>
-                <label class="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition bg-slate-50 hover:bg-blue-50 group">
+
+                <label id="upload-label" class="border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition bg-slate-50 hover:bg-blue-50 group">
                     <i class="fa-solid fa-cloud-arrow-up text-3xl text-slate-400 group-hover:text-blue-500 mb-2"></i>
                     <span class="font-medium">Bấm để tải ảnh mặt</span>
-                    <input type="file" id="user-upload" class="hidden" onchange="previewImg(event)">
+                    <input type="file" id="user-upload" class="hidden" accept="image/*" onchange="previewImg(event)">
                 </label>
+
                 <div id="preview-box" class="mt-4 hidden relative rounded-lg overflow-hidden border bg-black h-40 flex justify-center">
                     <img id="preview-img" src="" class="h-full object-contain">
-                    <button onclick="resetImg()" class="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full shadow-lg"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="resetImg()" class="absolute top-2 right-2 bg-red-500 text-white w-8 h-8 rounded-full shadow-lg hover:bg-red-600 transition"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
@@ -45,16 +47,17 @@
                 <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><span class="bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span> Chọn mẫu Vest Studio</h2>
                 <div class="grid grid-cols-2 gap-4">
                     <div id="card-den" onclick="selectVest('vest-den')" class="border-4 border-blue-600 rounded-2xl p-2 cursor-pointer transition-all relative overflow-hidden group">
-                        <img src="/vest-den.png" class="w-full h-40 object-cover rounded-xl group-hover:scale-105 transition">
+                        <img src="/vest-den.png" class="w-full h-40 object-cover rounded-xl group-hover:scale-105 transition" onerror="this.src='https://placehold.co/200x200?text=Vest+Den'">
                         <div class="absolute bottom-0 inset-x-0 bg-black/50 text-white text-center py-1 text-sm font-bold">Vest Đen</div>
                         <div id="check-den" class="absolute top-2 right-2 bg-blue-600 text-white w-6 h-6 rounded-full flex items-center justify-center"><i class="fa-solid fa-check"></i></div>
                     </div>
                     <div id="card-xam" onclick="selectVest('vest-xam')" class="border-4 border-transparent rounded-2xl p-2 cursor-pointer transition-all relative overflow-hidden group bg-slate-100">
-                        <img src="/vest-xam.png" class="w-full h-40 object-cover rounded-xl group-hover:scale-105 transition">
+                        <img src="/vest-xam.png" class="w-full h-40 object-cover rounded-xl group-hover:scale-105 transition" onerror="this.src='https://placehold.co/200x200?text=Vest+Xam'">
                         <div class="absolute bottom-0 inset-x-0 bg-black/50 text-white text-center py-1 text-sm font-bold">Vest Xám</div>
                         <div id="check-xam" class="absolute top-2 right-2 bg-blue-600 text-white w-6 h-6 rounded-full hidden items-center justify-center"><i class="fa-solid fa-check"></i></div>
                     </div>
                 </div>
+
                 <button onclick="handleSwap()" class="w-full mt-8 bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-xl transition-all transform active:scale-95 text-lg">
                     <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> TIẾN HÀNH GHÉP ẢNH AI
                 </button>
@@ -65,18 +68,148 @@
             <h2 class="font-bold text-xl mb-6 flex items-center gap-2 text-slate-700"><i class="fa-solid fa-image text-blue-600"></i> Ảnh kết quả của bạn</h2>
 
             <div class="flex-1 bg-slate-100 rounded-2xl overflow-hidden relative border border-slate-200" id="display-area">
+
                 <div id="state-empty" class="h-full flex flex-col items-center justify-center text-slate-400 gap-3">
                     <i class="fa-regular fa-image text-6xl"></i>
                     <p class="font-medium italic">Kết quả sẽ hiển thị tại đây...</p>
                 </div>
 
-                <div id="state-loading" class="h-full hidden flex flex-col items-center justify-center bg-white/80 z-10">
+                <div id="state-loading" class="h-full hidden flex flex-col items-center justify-center bg-white/90 z-10">
                     <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
                     <p class="mt-4 font-bold text-blue-600">AI ĐANG XỬ LÝ KHUÔN MẶT...</p>
+                    <p class="text-sm text-slate-500 mt-2">Vui lòng đợi khoảng 15-30 giây</p>
                 </div>
 
                 <div id="state-locked" class="h-full hidden relative">
                     <img id="img-locked" src="" class="w-full h-full object-contain blur-result">
-                    <div class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white text-center p-6">
+                    <div class="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white text-center p-6">
                         <i class="fa-solid fa-lock text-5xl mb-4 text-amber-400 drop-shadow-lg"></i>
-                        <h3 class="text-2xl font-black mb-2 tracking-
+                        <h3 class="text-2xl font-black mb-2 tracking-wide">AI ĐÃ XỬ LÝ XONG!</h3>
+                        <p class="text-sm text-slate-200 mb-6">Nhấn nút bên dưới để xem ảnh sắc nét và tải về máy.</p>
+                        <button onclick="unlockImage()" class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3 px-8 rounded-full shadow-xl transition transform hover:scale-105">
+                            <i class="fa-solid fa-eye mr-2"></i> Xem Ảnh Gốc
+                        </button>
+                    </div>
+                </div>
+
+                <div id="state-success" class="h-full hidden relative group bg-black flex justify-center items-center">
+                    <img id="img-result" src="" class="max-h-full max-w-full object-contain">
+                    <div class="absolute bottom-6 inset-x-0 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <a id="download-btn" href="#" target="_blank" download="chidung-ai-studio.jpg" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-2xl flex items-center gap-2 transform hover:scale-105 transition">
+                            <i class="fa-solid fa-download"></i> Tải Ảnh Xuống
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let selectedVest = 'vest-den';
+        let userFile = null;
+
+        // 1. Chọn Vest
+        function selectVest(vestType) {
+            selectedVest = vestType;
+
+            // Tắt hiệu ứng vest cũ
+            document.querySelectorAll('[id^="card-"]').forEach(el => {
+                el.classList.remove('border-blue-600');
+                el.classList.add('border-transparent', 'bg-slate-100');
+            });
+            document.querySelectorAll('[id^="check-"]').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            });
+
+            // Bật hiệu ứng vest mới
+            const shortName = vestType.split('-')[1]; // lấy chữ 'den' hoặc 'xam'
+            document.getElementById(`card-${shortName}`).classList.add('border-blue-600');
+            document.getElementById(`card-${shortName}`).classList.remove('border-transparent', 'bg-slate-100');
+
+            const checkEl = document.getElementById(`check-${shortName}`);
+            checkEl.classList.remove('hidden');
+            checkEl.classList.add('flex');
+        }
+
+        // 2. Hiển thị ảnh upload
+        function previewImg(event) {
+            const file = event.target.files[0];
+            if (file) {
+                userFile = file;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('preview-img').src = e.target.result;
+                    document.getElementById('preview-box').classList.remove('hidden');
+                    document.getElementById('upload-label').classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 3. Xóa ảnh đã chọn
+        function resetImg() {
+            userFile = null;
+            document.getElementById('user-upload').value = '';
+            document.getElementById('preview-box').classList.add('hidden');
+            document.getElementById('upload-label').classList.remove('hidden');
+        }
+
+        // 4. Chuyển đổi các màn hình trạng thái
+        function switchState(stateId) {
+            ['state-empty', 'state-loading', 'state-locked', 'state-success'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(stateId).classList.remove('hidden');
+        }
+
+        // 5. Gửi dữ liệu lên Server API (Gắn với server.js)
+        async function handleSwap() {
+            if (!userFile) {
+                alert("Ông quên chưa tải khuôn mặt lên kìa!");
+                return;
+            }
+
+            switchState('state-loading');
+
+            const formData = new FormData();
+            formData.append('swap_image', userFile);
+            formData.append('vest_type', selectedVest);
+
+            try {
+                // Gọi API sang backend server.js
+                const response = await fetch('/api/swap-face', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success && result.imageUrl) {
+                    // Cài đặt link ảnh vào trạng thái mờ và trạng thái gốc
+                    document.getElementById('img-locked').src = result.imageUrl;
+                    document.getElementById('img-result').src = result.imageUrl;
+                    document.getElementById('download-btn').href = result.imageUrl;
+
+                    // Chuyển sang màn hình "Mở Khóa"
+                    switchState('state-locked');
+                } else {
+                    // Báo lỗi (VD: Quá 3 lượt)
+                    alert("⚠️ Thông báo: " + (result.error || "Có lỗi xảy ra khi ghép ảnh."));
+                    switchState('state-empty');
+                }
+            } catch (error) {
+                alert("❌ Lỗi kết nối tới máy chủ AI! Vui lòng thử lại sau.");
+                console.error(error);
+                switchState('state-empty');
+            }
+        }
+
+        // 6. Nút mở khóa xem ảnh gốc
+        function unlockImage() {
+            switchState('state-success');
+        }
+    </script>
+</body>
+</html>

@@ -16,8 +16,8 @@ app.use(express.static(__dirname));
 if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
 const upload = multer({ dest: 'uploads/' });
 
-// 1. KẾT NỐI DATABASE MONGO DB ATLAS CỦA TIẾN
-const MONGO_URI = "mongodb+srv://tienbuicong586_db_user:WVsSnsObWtGxRPZ4@cluster0.vf5dq6j.mongodb.net/?appName=Cluster0"; 
+// 1. KẾT NỐI DATABASE MONGO DB ATLAS (Đã fix thêm tên db cvphotos)
+const MONGO_URI = "mongodb+srv://tienbuicong586_db_user:WVsSnsObWtGxRPZ4@cluster0.vf5dq6j.mongodb.net/cvphotos?retryWrites=true&w=majority"; 
 mongoose.connect(MONGO_URI)
   .then(() => console.log("👉 Đã kết nối thành công tới Database đám mây!"))
   .catch(err => console.error("❌ Lỗi kết nối Database:", err));
@@ -41,9 +41,10 @@ const imageToBase64 = (filePath) => {
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Hàm lấy IP thật của người dùng khi chạy trên Render
+// Hàm lấy IP thật của người dùng khi chạy trên Render (Đã fix chuẩn Load Balancer)
 function getClientIp(req) {
-    return req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const forwarded = req.headers['x-forwarded-for'];
+    return forwarded ? forwarded.split(',')[0].trim() : req.socket.remoteAddress;
 }
 
 // 2. API XỬ LÝ GHÉP MẶT (ĐÃ THÊM TÍNH NĂNG ĐẾM LƯỢT CHỐNG SPAM)
