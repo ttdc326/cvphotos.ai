@@ -31,7 +31,7 @@ const UserUsageSchema = new mongoose.Schema({
 const UserUsage = mongoose.model('UserUsage', UserUsageSchema);
 
 const AI_API_URL = 'https://api.piapi.ai/api/v1/task';
-const AI_API_KEY = process.env.PIAPI_KEY || 'app-QY3gKj7bYidbCgRkZ0P2q7vW';
+const AI_API_KEY = process.env.PIAPI_KEY || '0745b78371b00f1c73ddbb50ba7d636a07c926cfa499a27e708eb1052e9ddf9d';
 
 const imageToBase64 = (filePath) => {
     const ext = path.extname(filePath).replace('.', '').toLowerCase();
