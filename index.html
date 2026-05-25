@@ -3,9 +3,13 @@
 <head>
     <meta name="monetag" content="11d4a6d200e96404f5956fec7242ba68">
     <script src="https://quge5.com/88/tag.min.js" data-zone="242854" async data-cfasync="false"></script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Studio - Tạo Ảnh Chân Dung Công Sở</title>
+
+    <title>Tạo ảnh chân dung vest công sở bằng AI miễn phí - AI Studio</title>
+    <meta name="description" content="Tạo ảnh chân dung công sở chuyên nghiệp với vest chỉ trong 30 giây bằng AI. Công cụ ghép mặt vào vest miễn phí, nhanh chóng, sắc nét.">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -102,7 +106,6 @@
                         </a>
                     </div>
                 </div>
-
             </div>
         </div>
     </main>
@@ -111,11 +114,8 @@
         let selectedVest = 'vest-den';
         let userFile = null;
 
-        // 1. Chọn Vest
         function selectVest(vestType) {
             selectedVest = vestType;
-
-            // Tắt hiệu ứng vest cũ
             document.querySelectorAll('[id^="card-"]').forEach(el => {
                 el.classList.remove('border-blue-600');
                 el.classList.add('border-transparent', 'bg-slate-100');
@@ -124,18 +124,14 @@
                 el.classList.add('hidden');
                 el.classList.remove('flex');
             });
-
-            // Bật hiệu ứng vest mới
-            const shortName = vestType.split('-')[1]; // lấy chữ 'den' hoặc 'xam'
+            const shortName = vestType.split('-')[1];
             document.getElementById(`card-${shortName}`).classList.add('border-blue-600');
             document.getElementById(`card-${shortName}`).classList.remove('border-transparent', 'bg-slate-100');
-
             const checkEl = document.getElementById(`check-${shortName}`);
             checkEl.classList.remove('hidden');
             checkEl.classList.add('flex');
         }
 
-        // 2. Hiển thị ảnh upload
         function previewImg(event) {
             const file = event.target.files[0];
             if (file) {
@@ -150,7 +146,6 @@
             }
         }
 
-        // 3. Xóa ảnh đã chọn
         function resetImg() {
             userFile = null;
             document.getElementById('user-upload').value = '';
@@ -158,7 +153,6 @@
             document.getElementById('upload-label').classList.remove('hidden');
         }
 
-        // 4. Chuyển đổi các màn hình trạng thái
         function switchState(stateId) {
             ['state-empty', 'state-loading', 'state-locked', 'state-success'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
@@ -166,38 +160,27 @@
             document.getElementById(stateId).classList.remove('hidden');
         }
 
-        // 5. Gửi dữ liệu lên Server API (Gắn với server.js)
         async function handleSwap() {
             if (!userFile) {
                 alert("Ông quên chưa tải khuôn mặt lên kìa!");
                 return;
             }
-
             switchState('state-loading');
-
             const formData = new FormData();
             formData.append('swap_image', userFile);
             formData.append('vest_type', selectedVest);
-
             try {
-                // Gọi API sang backend server.js
                 const response = await fetch('/api/swap-face', {
                     method: 'POST',
                     body: formData
                 });
-
                 const result = await response.json();
-
                 if (result.success && result.imageUrl) {
-                    // Cài đặt link ảnh vào trạng thái mờ và trạng thái gốc
                     document.getElementById('img-locked').src = result.imageUrl;
                     document.getElementById('img-result').src = result.imageUrl;
                     document.getElementById('download-btn').href = result.imageUrl;
-
-                    // Chuyển sang màn hình "Mở Khóa"
                     switchState('state-locked');
                 } else {
-                    // Báo lỗi (VD: Quá 3 lượt)
                     alert("⚠️ Thông báo: " + (result.error || "Có lỗi xảy ra khi ghép ảnh."));
                     switchState('state-empty');
                 }
@@ -208,7 +191,6 @@
             }
         }
 
-        // 6. Nút mở khóa xem ảnh gốc
         function unlockImage() {
             switchState('state-success');
         }
